@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -49,3 +52,13 @@ jobs:
         name: BlinkAssist_Standalone_EXE
         path: dist/BlinkAssist-Standalone.exe
         retention-days: 14
+
+    - name: Publish High-Speed GitHub Release
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v1.0.0 BlinkAssist_Windows.zip dist/BlinkAssist-Standalone.exe \
+          --title "Blink-Assist Windows v1.0.0" \
+          --notes "High-speed CDN download of Blink-Assist Windows standalone executable and full folder bundle." \
+          --clobber
